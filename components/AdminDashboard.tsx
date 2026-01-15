@@ -5,7 +5,7 @@ import { db } from '../services/db';
 import { analyzeCheckIns } from '../services/geminiService';
 import { COUNTRIES, TAGS } from '../constants';
 import { CheckIn } from '../types';
-import { RefreshCw, FileText, TrendingUp, AlertCircle, Database, DatabaseBackup } from 'lucide-react';
+import { RefreshCw, FileText, TrendingUp, AlertCircle, Database, DatabaseBackup, Users, MapPin, Star, Calendar } from 'lucide-react';
 
 const AdminDashboard: React.FC = () => {
   const [data, setData] = useState<CheckIn[]>([]);
@@ -145,6 +145,65 @@ const AdminDashboard: React.FC = () => {
         </div>
       ) : (
         <>
+          {/* 數據概覽卡片 */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {/* 總打卡次數 */}
+            <div className="bg-[#161b22] p-5 rounded-2xl border border-[#30363d]">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 bg-orange-500/20 rounded-lg">
+                  <TrendingUp className="w-5 h-5 text-orange-500" />
+                </div>
+                <span className="text-xs text-slate-400 font-medium">總打卡次數</span>
+              </div>
+              <div className="text-3xl font-black text-white">{data.length}</div>
+            </div>
+
+            {/* 不重複參與人數 */}
+            <div className="bg-[#161b22] p-5 rounded-2xl border border-[#30363d]">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 bg-blue-500/20 rounded-lg">
+                  <Users className="w-5 h-5 text-blue-500" />
+                </div>
+                <span className="text-xs text-slate-400 font-medium">參與人數</span>
+              </div>
+              <div className="text-3xl font-black text-white">
+                {new Set(data.map(d => d.nickname)).size}
+              </div>
+            </div>
+
+            {/* 熱門攤位 */}
+            <div className="bg-[#161b22] p-5 rounded-2xl border border-[#30363d]">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 bg-red-500/20 rounded-lg">
+                  <MapPin className="w-5 h-5 text-red-500" />
+                </div>
+                <span className="text-xs text-slate-400 font-medium">熱門攤位</span>
+              </div>
+              <div className="text-2xl font-black text-white">
+                {countryStats[0]?.name || '-'}
+              </div>
+              <div className="text-xs text-slate-500 mt-1">
+                {countryStats[0]?.count || 0} 次打卡
+              </div>
+            </div>
+
+            {/* 最受歡迎標籤 */}
+            <div className="bg-[#161b22] p-5 rounded-2xl border border-[#30363d]">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 bg-yellow-500/20 rounded-lg">
+                  <Star className="w-5 h-5 text-yellow-500" />
+                </div>
+                <span className="text-xs text-slate-400 font-medium">最多評價</span>
+              </div>
+              <div className="text-2xl font-black text-white">
+                {tagStats[0]?.name || '-'}
+              </div>
+              <div className="text-xs text-slate-500 mt-1">
+                {tagStats[0]?.count || 0} 次選擇
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Countries Bar Chart */}
             <div className="bg-[#161b22] p-6 rounded-3xl border border-[#30363d] shadow-xl">
