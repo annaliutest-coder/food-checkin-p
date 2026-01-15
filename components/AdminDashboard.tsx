@@ -5,7 +5,7 @@ import { db } from '../services/db';
 import { analyzeCheckIns } from '../services/geminiService';
 import { COUNTRIES, TAGS } from '../constants';
 import { CheckIn } from '../types';
-import { RefreshCw, FileText, TrendingUp, AlertCircle, Database, DatabaseBackup, Users, MapPin, Star, Calendar } from 'lucide-react';
+import { RefreshCw, FileText, TrendingUp, AlertCircle, Database, DatabaseBackup, Users, MapPin, Star, Calendar, Download } from 'lucide-react';
 
 const AdminDashboard: React.FC = () => {
   const [data, setData] = useState<CheckIn[]>([]);
@@ -107,7 +107,7 @@ const AdminDashboard: React.FC = () => {
 
           {/* Seed Button - Now always visible in the toolbar if connected */}
           {dbStatus === 'connected' && (
-            <button 
+            <button
               onClick={handleSeed}
               disabled={isLoading}
               className="flex items-center gap-2 px-3 py-1.5 bg-blue-600/20 border border-blue-500/50 text-blue-400 hover:bg-blue-600/40 rounded-full text-[10px] font-bold transition-all disabled:opacity-50"
@@ -115,6 +115,18 @@ const AdminDashboard: React.FC = () => {
               <DatabaseBackup className="w-3 h-3" />
               匯入測試資料
             </button>
+          )}
+
+          {/* Export CSV Button */}
+          {dbStatus === 'connected' && data.length > 0 && (
+            <a
+              href="/api/export"
+              download
+              className="flex items-center gap-2 px-3 py-1.5 bg-green-600/20 border border-green-500/50 text-green-400 hover:bg-green-600/40 rounded-full text-[10px] font-bold transition-all"
+            >
+              <Download className="w-3 h-3" />
+              匯出 CSV
+            </a>
           )}
           
           <button 
