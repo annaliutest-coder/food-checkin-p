@@ -1,7 +1,0 @@
-build:
-  - type: nodejs
-    build:
-      - npm install
-      - npm run build
-    start: npm start
-    node_version: 20
