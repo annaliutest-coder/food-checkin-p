@@ -51,7 +51,7 @@ async def startup():
             DATABASE_URL,
             min_size=1,
             max_size=10,
-            ssl="require" if "zeabur.internal" not in DATABASE_URL and "localhost" not in DATABASE_URL else None
+            ssl="require" if "zeabur" not in DATABASE_URL and "localhost" not in DATABASE_URL else None
         )
 
         async with pool.acquire() as conn:
