@@ -21,6 +21,19 @@ const App: React.FC = () => {
   const [view, setView] = useState<'form' | 'admin' | 'success'>(isAdmin ? 'admin' : 'form');
   const [checkInData, setCheckInData] = useState<CheckInData | null>(null);
   const [copied, setCopied] = useState(false);
+  const [tapCount, setTapCount] = useState(0);
+
+  // 隱藏入口：連續點擊標題 5 次進入後台
+  const handleTitleTap = () => {
+    const newCount = tapCount + 1;
+    setTapCount(newCount);
+    if (newCount >= 5) {
+      setView('admin');
+      setTapCount(0);
+    }
+    // 2 秒內沒繼續點就重置
+    setTimeout(() => setTapCount(0), 2000);
+  };
 
   const handleSuccess = (data: CheckInData) => {
     setCheckInData(data);
@@ -69,7 +82,10 @@ ${tagLabels ? `✨ ${tagLabels}` : ''}
           International Week 2026
         </div>
         
-        <h1 className="text-5xl md:text-6xl font-black italic tracking-tighter">
+        <h1
+          onClick={handleTitleTap}
+          className="text-5xl md:text-6xl font-black italic tracking-tighter cursor-default select-none"
+        >
           國際週美食<span className="text-red-500">護照</span>
         </h1>
         
