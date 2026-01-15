@@ -20,6 +20,9 @@ COPY main.py .
 # 複製前端構建產物
 COPY --from=frontend-builder /app/dist ./dist
 
-EXPOSE 3000
+# 使用環境變數 PORT，預設 8080
+ENV PORT=8080
+EXPOSE 8080
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "3000"]
+# 使用 shell 形式來讀取環境變數
+CMD uvicorn main:app --host 0.0.0.0 --port $PORT
