@@ -4,8 +4,16 @@ import { User, Plane, Globe, AlertCircle } from 'lucide-react';
 import { COUNTRIES, TAGS, DAYS } from '../constants';
 import { db } from '../services/db';
 
+interface CheckInData {
+  nickname: string;
+  day: number;
+  countryCode: string;
+  countryName: string;
+  tags: string[];
+}
+
 interface Props {
-  onSuccess: () => void;
+  onSuccess: (data: CheckInData) => void;
 }
 
 const PassportForm: React.FC<Props> = ({ onSuccess }) => {
@@ -53,13 +61,23 @@ const PassportForm: React.FC<Props> = ({ onSuccess }) => {
     
     setIsSubmitting(true);
     try {
+      const finalCountryCode = isOtherSelected ? customCountry.trim() : selectedCountry;
+      const countryObj = COUNTRIES.find(c => c.code === selectedCountry);
+      const countryName = isOtherSelected ? customCountry.trim() : (countryObj?.name || selectedCountry);
+
       await db.saveCheckIn({
         nickname,
         day: selectedDay,
-        countryCode: isOtherSelected ? customCountry.trim() : selectedCountry,
+        countryCode: finalCountryCode,
         tags: selectedTags
       });
-      onSuccess();
+      onSuccess({
+        nickname,
+        day: selectedDay,
+        countryCode: finalCountryCode,
+        countryName,
+        tags: selectedTags
+      });
     } catch (err: any) {
       console.error('Submit error:', err);
       // 顯示最詳細的錯誤訊息以便診斷
