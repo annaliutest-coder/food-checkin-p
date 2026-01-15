@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { MapPin, CheckCircle2, LayoutDashboard, UtensilsCrossed, Share2, Copy, Check } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { MapPin, CheckCircle2, LayoutDashboard, UtensilsCrossed, Share2, Copy, Check, Megaphone } from 'lucide-react';
 import PassportForm from './components/PassportForm';
 import AdminDashboard from './components/AdminDashboard';
 import { TAGS } from './constants';
@@ -22,6 +22,15 @@ const App: React.FC = () => {
   const [checkInData, setCheckInData] = useState<CheckInData | null>(null);
   const [copied, setCopied] = useState(false);
   const [tapCount, setTapCount] = useState(0);
+  const [announcement, setAnnouncement] = useState('');
+
+  // 載入公告
+  useEffect(() => {
+    fetch('/api/announcement')
+      .then(res => res.json())
+      .then(data => setAnnouncement(data.content || ''))
+      .catch(() => {});
+  }, []);
 
   // 隱藏入口：連續點擊標題 5 次進入後台
   const handleTitleTap = () => {
@@ -97,7 +106,21 @@ ${tagLabels ? `✨ ${tagLabels}` : ''}
       {/* Main Content Area */}
       <main className="w-full max-w-4xl">
         {view === 'form' && (
-          <div className="animate-in slide-in-from-bottom-8 duration-700">
+          <div className="animate-in slide-in-from-bottom-8 duration-700 space-y-6">
+            {/* 公告欄 */}
+            {announcement && (
+              <div className="max-w-lg mx-auto bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-orange-500/30 rounded-2xl p-4">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-orange-500/20 rounded-lg shrink-0">
+                    <Megaphone className="w-5 h-5 text-orange-500" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-orange-500 uppercase tracking-wider mb-1">最新公告</p>
+                    <p className="text-sm text-slate-300 whitespace-pre-wrap">{announcement}</p>
+                  </div>
+                </div>
+              </div>
+            )}
             <PassportForm onSuccess={handleSuccess} />
           </div>
         )}

@@ -77,6 +77,12 @@ async def shutdown():
     if pool:
         await pool.close()
 
+@app.get("/api/announcement")
+async def get_announcement():
+    """取得公告內容"""
+    announcement = os.getenv("ANNOUNCEMENT", "")
+    return {"content": announcement}
+
 @app.get("/api/health")
 async def health_check():
     if not pool:
