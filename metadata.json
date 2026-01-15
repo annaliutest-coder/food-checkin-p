@@ -1,0 +1,5 @@
+{
+  "name": "International Food Passport",
+  "description": "A digital food passport for International Week allowing students to check in at different country booths, earn stamps, and provide feedback. Includes an AI-powered analytics dashboard.",
+  "requestFramePermissions": []
+}
