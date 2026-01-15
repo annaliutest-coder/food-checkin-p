@@ -2,7 +2,7 @@ import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel
 from typing import List, Optional
 import asyncpg
@@ -157,6 +157,35 @@ async def seed_data():
             )
 
     return {"message": "Success", "count": len(sample_data)}
+
+@app.get("/api/export")
+async def export_csv():
+    """匯出所有打卡資料為 CSV"""
+    if not pool:
+        raise HTTPException(status_code=500, detail="Database not connected")
+
+    async with pool.acquire() as conn:
+        rows = await conn.fetch("SELECT * FROM check_ins ORDER BY created_at DESC")
+
+    # 建立 CSV 內容
+    csv_lines = ["ID,暱稱,天數,國家代碼,標籤,打卡時間"]
+    for row in rows:
+        tags_str = "|".join(row["tags"]) if row["tags"] else ""
+        timestamp = row["created_at"].strftime("%Y-%m-%d %H:%M:%S")
+        # 處理可能包含逗號的欄位
+        nickname = f'"{row["nickname"]}"' if "," in row["nickname"] else row["nickname"]
+        csv_lines.append(f'{row["id"]},{nickname},{row["day"]},{row["country_code"]},{tags_str},{timestamp}')
+
+    csv_content = "\n".join(csv_lines)
+
+    # 加入 BOM 讓 Excel 正確顯示中文
+    bom = "\ufeff"
+
+    return Response(
+        content=bom + csv_content,
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": "attachment; filename=checkins.csv"}
+    )
 
 # 靜態文件服務（前端）
 if os.path.exists("dist"):
